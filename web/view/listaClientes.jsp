@@ -79,7 +79,7 @@
                         out.print(listaIngressos.toString());
                     %><%
                         }%>
-                        <a href="controle?op=<%out.print(AcoesCommand.CADASTRAR.getAcao());%>&idCliente=<%out.print(c.getId());%>&model=<%out.print(ingressoEnum.getSingular());%>"
+                        <a href="controle?idCliente=<%out.print(c.getId());%>&model=<%out.print(ingressoEnum.getSingular());%>"
                            class="btn-add-ingresso" title="Novo Ingresso">+</a>
                     </td>
                     <td class="coluna-acoes">
