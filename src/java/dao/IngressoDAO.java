@@ -12,13 +12,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import model.ClienteModel;
+
+import model.*;
 import util.FabricaConexao;
-import model.IngressoModel;
-import model.FilmeModel;
-import model.PagamentoModel;
-import model.SalaModel;
-import model.SessaoModel;
 
 /**
  *
@@ -30,12 +26,14 @@ public class IngressoDAO {
         Connection con = FabricaConexao.getConexao();
         PreparedStatement comando = con.prepareStatement("insert into Ingresso (idCliente, idSessao, idPagamento) values (?, ?, ?)");
 
-        PagamentoModel pagamento = PagamentoModel.getBuilder()
-                .comValor(ingresso.getPagamento().getValor())
-                .comFormaPagamento(ingresso.getPagamento().getFormaPagamento())
-                .constroi();
+        PagamentoBuilder pagamento = switch (ingresso.getPagamento().getFormaPagamento()) {
+            case "Cartão" -> new PagamentoBuilder(new Cartao());
+            case "Pix" -> new PagamentoBuilder(new Pix());
+            default -> new PagamentoBuilder(new Dinheiro());
+        };
+
         PagamentoDAO pagamentoDAO = new PagamentoDAO();
-        int idGerado = pagamentoDAO.cadastrar(pagamento);
+        int idGerado = pagamentoDAO.cadastrar(pagamento.constroi());
 
         comando.setInt(1, ingresso.getCliente().getId());
         comando.setInt(2, ingresso.getSessao().getId());
@@ -75,13 +73,15 @@ public class IngressoDAO {
             ClienteModel cliente = ClienteModel.getBuilder()
                     .comId(rs.getInt("idCliente"))
                     .constroi();
-            PagamentoModel pagamento = PagamentoModel.getBuilder()
-                    .comId(rs.getInt("idPagamento"))
-                    .constroi();
+            PagamentoBuilder pagamento = switch (ingresso.getPagamento().getFormaPagamento()) {
+                case "Cartão" -> new PagamentoBuilder(new Cartao());
+                case "Pix" -> new PagamentoBuilder(new Pix());
+                default -> new PagamentoBuilder(new Dinheiro());
+            };
             ing.comId(rs.getInt("idIngresso"))
                     .comSessao(sessao)
                     .comCliente(cliente)
-                    .comPagamento(pagamento);
+                    .comPagamento(pagamento.constroi());
         }
         con.close();
         return ing.constroi();

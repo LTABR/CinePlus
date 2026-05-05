@@ -26,7 +26,7 @@
 <%
     NomesModel clienteEnum = NomesModel.CLIENTE;
     NomesModel ingressoEnum = NomesModel.INGRESSO;
-    String[] formasPagamento = {"Crédito", "Débito", "Dinheiro", "PIX"};
+    String[] formasPagamento = {"Cartão", "Dinheiro", "Pix"};
     ClienteModel cliente = (ClienteModel) request.getAttribute("cliente");
     List<HashMap<String, Object>> opcoes = (List<HashMap<String, Object>>) request.getAttribute("opcoes");
 %>
