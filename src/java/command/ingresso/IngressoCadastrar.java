@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import javax.servlet.ServletException;
 
 import model.*;
+import model.pagamento.*;
 
 /**
  *
@@ -39,17 +40,18 @@ public class IngressoCadastrar implements ICommand {
                     .comId(idSessao)
                     .constroi();
 
-            PagamentoBuilder pagamento = switch (formaPagamento) {
-                case "Cartão" -> new PagamentoBuilder(new Cartao());
-                case "Pix" -> new PagamentoBuilder(new Pix());
-                default -> new PagamentoBuilder(new Dinheiro());
-            };
+            PagamentoModel pagamento =  new PagamentoBuilder(switch (formaPagamento) {
+                case "Cartão" -> new Cartao();
+                case "Pix" -> new Pix();
+                default -> new Dinheiro();
+            })
+                    .comValor(valorPagamento)
+                    .constroi();
 
-            pagamento.comValor(valorPagamento);
             IngressoModel ingresso = IngressoModel.getBuilder()
                     .comCliente(cliente)
                     .comSessao(sessao)
-                    .comPagamento(pagamento.constroi())
+                    .comPagamento(pagamento)
                     .constroi();
 
             ingressoDAO.cadastrar(ingresso);

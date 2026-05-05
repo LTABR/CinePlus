@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="mysql-connector-j-9.2.0">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../../xampp/tomcat/mysql-connector-j-9.2.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/resources/mysql-connector-j-9.2.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

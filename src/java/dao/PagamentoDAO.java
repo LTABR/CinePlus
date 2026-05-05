@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import util.FabricaConexao;
-import model.PagamentoModel;
+import model.pagamento.PagamentoModel;
 
 /**
  *

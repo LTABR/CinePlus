@@ -4,6 +4,8 @@
  */
 package model;
 
+import model.pagamento.PagamentoModel;
+
 /**
  *
  * @author lucas
