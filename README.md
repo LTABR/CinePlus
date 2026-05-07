@@ -70,4 +70,4 @@ CinePlus/
 
 ## Licença
 
-Uso educacional. Ajuste a licença conforme a política da sua instituição ou equipe.
+Uso educacional. Todos os direitos reservados para os autores.
