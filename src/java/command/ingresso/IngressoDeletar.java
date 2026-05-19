@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import command.ICommand;
 import dao.IngressoDAO;
 import java.io.IOException;
-import java.sql.SQLException;
 import javax.servlet.ServletException;
 import model.IngressoModel;
 
@@ -19,7 +18,6 @@ import model.IngressoModel;
  */
 public class IngressoDeletar implements ICommand {
 
-    // acredito que isso não esteja sendo utilizado, mas pode ser útil em manutenções futuras
     @Override
     public String executar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String pagina = "controle?op=ConsultarTodos&model=Cliente";
@@ -30,13 +28,13 @@ public class IngressoDeletar implements ICommand {
         IngressoModel ingresso = IngressoModel.getBuilder()
                 .comId(id)
                 .constroi();
-        try {
-            ingressoDAO.deletar(ingresso);
-        } catch (ClassNotFoundException | SQLException | NumberFormatException err) {
-            System.out.println("ERRO: " + err);
-            request.setAttribute("message", err);
-            pagina = "erro.jsp";
-        }
+//        try {
+//            ingressoDAO.deletar(ingresso);
+//        } catch (ClassNotFoundException | SQLException | NumberFormatException err) {
+//            System.out.println("ERRO: " + err);
+//            request.setAttribute("message", err);
+//            pagina = "erro.jsp";
+//        }
         return pagina;
     }
 }

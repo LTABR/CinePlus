@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import decorator.pagamento.PagamentoAVista;
+import decorator.pagamento.PagamentoDecorator;
+import decorator.pagamento.PagamentoParcelado;
 import model.*;
 import model.pagamento.*;
 import util.FabricaConexao;
@@ -23,17 +26,28 @@ import util.FabricaConexao;
  */
 public class IngressoDAO {
 
+    private static PagamentoDecorator getPagamentoDecorator(IngressoModel ingresso) {
+        PagamentoModel pagamento = switch (ingresso.getPagamento().getFormaPagamento()) {
+            case "Cartão" -> new Cartao();
+            case "Pix" -> new Pix();
+            default -> new Boleto();
+        };
+        return ingresso.getPagamento().getClass().equals(PagamentoParcelado.class) ?
+                new PagamentoParcelado(
+                        pagamento,
+                        ((PagamentoParcelado) ingresso.getPagamento()).getParcelas(),
+                        ((PagamentoParcelado) ingresso.getPagamento()).getValorParcela()) :
+                new PagamentoAVista(
+                        pagamento,
+                        ((PagamentoAVista) ingresso.getPagamento()).getValorTotal(),
+                        ((PagamentoAVista) ingresso.getPagamento()).isMeiaEntrada());
+    }
+
     public void cadastrar(IngressoModel ingresso) throws ClassNotFoundException, SQLException {
         Connection con = FabricaConexao.getConexao();
         PreparedStatement comando = con.prepareStatement("insert into Ingresso (idCliente, idSessao, idPagamento) values (?, ?, ?)");
 
-        PagamentoModel pagamento = new PagamentoBuilder(switch (ingresso.getPagamento().getFormaPagamento()) {
-            case "Cartão" -> new Cartao();
-            case "Pix" -> new Pix();
-            default -> new Dinheiro();
-        })
-                .comValor(ingresso.getPagamento().getValor())
-                .constroi();
+        PagamentoDecorator pagamento = getPagamentoDecorator(ingresso);
 
         PagamentoDAO pagamentoDAO = new PagamentoDAO();
         int idGerado = pagamentoDAO.cadastrar(pagamento);
@@ -45,6 +59,8 @@ public class IngressoDAO {
         con.close();
     }
 
+    // acredito que isso não esteja sendo utilizado, mas pode ser útil em manutenções futuras
+    /*
     public void deletar(IngressoModel ingresso) throws ClassNotFoundException, SQLException {
         Connection con = FabricaConexao.getConexao();
         PreparedStatement comando = con.prepareStatement("delete from Ingresso where idcliente = ?");
@@ -76,13 +92,7 @@ public class IngressoDAO {
             ClienteModel cliente = ClienteModel.getBuilder()
                     .comId(rs.getInt("idCliente"))
                     .constroi();
-            PagamentoModel pagamento = new PagamentoBuilder(switch (ingresso.getPagamento().getFormaPagamento()) {
-                case "Cartão" -> new Cartao();
-                case "Pix" -> new Pix();
-                default -> new Dinheiro();
-            })
-                    .comId(rs.getInt("idPagamento"))
-                    .constroi();
+            PagamentoModel pagamento = getPagamentoDecorator(ingresso);
             ing.comId(rs.getInt("idIngresso"))
                     .comSessao(sessao)
                     .comCliente(cliente)
@@ -91,6 +101,7 @@ public class IngressoDAO {
         con.close();
         return ing.constroi();
     }
+    */
 
     public List<HashMap<String, Object>> consultarDisponibilidade() throws ClassNotFoundException, SQLException {
         Connection con = FabricaConexao.getConexao();

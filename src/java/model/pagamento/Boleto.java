@@ -8,10 +8,10 @@ package model.pagamento;
  *
  * @author lucas
  */
-public class Dinheiro extends PagamentoModel {
+public class Boleto extends PagamentoModel {
 
     @Override
     public String getFormaPagamento() {
-        return "Dinheiro";
+        return "Boleto";
     }
 }

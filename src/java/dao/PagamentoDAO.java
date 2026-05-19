@@ -9,8 +9,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import decorator.pagamento.PagamentoAVista;
+import decorator.pagamento.PagamentoDecorator;
+import decorator.pagamento.PagamentoParcelado;
 import util.FabricaConexao;
-import model.pagamento.PagamentoModel;
 
 /**
  *
@@ -18,11 +21,13 @@ import model.pagamento.PagamentoModel;
  */
 public class PagamentoDAO {
 
-    public int cadastrar(PagamentoModel pagamento) throws ClassNotFoundException, SQLException {
+    public int cadastrar(PagamentoDecorator pagamento) throws ClassNotFoundException, SQLException {
         Connection con = FabricaConexao.getConexao();
-        PreparedStatement comando = con.prepareStatement("insert into Pagamento (valor, formaPagamento) values (?, ?)", Statement.RETURN_GENERATED_KEYS);
-        comando.setDouble(1, pagamento.getValor());
-        comando.setString(2, pagamento.getFormaPagamento());
+        PreparedStatement comando = con.prepareStatement("INSERT INTO Pagamento (parcelas, valorParcela, formaPagamento, meiaEntrada) VALUES (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+        comando.setInt(1, pagamento.getClass().equals(PagamentoParcelado.class) ? ((PagamentoParcelado) pagamento).getParcelas() : 1);
+        comando.setDouble(2, pagamento.getClass().equals(PagamentoParcelado.class) ? ((PagamentoParcelado) pagamento).getValorParcela() : pagamento.getValorTotal());
+        comando.setString(3, pagamento.getFormaPagamento());
+        comando.setBoolean(4, pagamento.getClass().equals(PagamentoAVista.class) && ((PagamentoAVista) pagamento).isMeiaEntrada());
         int idGerado = comando.executeUpdate();
 
         if (idGerado == 0) {

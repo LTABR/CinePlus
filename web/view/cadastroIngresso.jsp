@@ -26,7 +26,7 @@
 <%
     NomesModel clienteEnum = NomesModel.CLIENTE;
     NomesModel ingressoEnum = NomesModel.INGRESSO;
-    String[] formasPagamento = {"Cartão", "Dinheiro", "Pix"};
+    NomesModel pagamentoEnum = NomesModel.PAGAMENTO;
     ClienteModel cliente = (ClienteModel) request.getAttribute("cliente");
     List<HashMap<String, Object>> opcoes = (List<HashMap<String, Object>>) request.getAttribute("opcoes");
 %>
@@ -51,17 +51,9 @@
 
     <form method="GET" action="controle" class="ingresso-form">
         <input type="hidden" name="idCliente" value="<%out.print(cliente.getId());%>">
-        <input type="hidden" name="model" value="<%out.print(ingressoEnum.getSingularSemAcento());%>">
-        <input type="hidden" name="op" value="<%out.print(AcoesCommand.CADASTRAR.getAcao());%>">
+        <input type="hidden" name="model" value="<%out.print(pagamentoEnum.getSingularSemAcento());%>">
+        <input type="hidden" name="op" value="<%out.print(AcoesCommand.CONSULTAR_CADASTRO.getAcao());%>">
         <div class="col-client-value">
-            <div class="info-group margin-top-20">
-                <label for="valor" class="label-pill">Valor (R$)</label>
-                <div class="value-wrapper input-gold">
-                    <input type="number" id="valor" name="valor" placeholder="R$" required min="1" step=".5"
-                           class="input-gold-inner"/>
-                </div>
-            </div>
-
             <div class="info-group">
                 <span class="label-pill">Cliente: <h3><%out.println(cliente.getNome());%></h3></span>
             </div>
@@ -96,16 +88,12 @@
             </div>
         </div>
 
-        <div class="col-pagamento">
-            <label for="formaPagamento" class="label-pill">Pagamento</label>
+        <div class="col-sessao">
+            <label for="tipoPagamento" class="label-pill">Tipo de pagamento</label>
             <div class="custom-select-wrapper">
-                <select id="formaPagamento" name="formaPagamento" class="input-gold" required>
-                    <option value="">Selecione</option>
-                    <%
-                        for (String formapagamento : formasPagamento) {
-                    %>
-                    <option value="<%out.print(formapagamento);%>"><%out.print(formapagamento);%></option>
-                    <%}%>
+                <select id="tipoPagamento" name="tipoPagamento" class="input-gold" required>
+                    <option value="AVista">A vista</option>
+                    <option value="Parcelado">Parcelado</option>
                 </select>
                 <i class="icon-dropdown">️️⬇️</i>
             </div>
@@ -117,7 +105,11 @@
                     Voltar
                 </button>
             </a>
-            <button type="submit" class="btn-ticket">Confirmar</button>
+            <a href="controle?model=<%out.print(pagamentoEnum.getSingularSemAcento());%>&op=<%out.print(AcoesCommand.CONSULTAR_CADASTRO.getAcao());%>">
+                <button type="submit" class="btn-ticket">
+                    Prosseguir para pagamento
+                </button>
+            </a>
         </footer>
     </form>
 </div>

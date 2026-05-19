@@ -6,12 +6,16 @@ package command.ingresso;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import command.ICommand;
 import dao.IngressoDAO;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.servlet.ServletException;
 
+import decorator.pagamento.PagamentoAVista;
+import decorator.pagamento.PagamentoParcelado;
 import model.*;
 import model.pagamento.*;
 
@@ -29,31 +33,37 @@ public class IngressoCadastrar implements ICommand {
         int idSessao = Integer.parseInt(request.getParameter("idSessao"));
         String formaPagamento = request.getParameter("formaPagamento");
         double valorPagamento = Double.parseDouble(request.getParameter("valor"));
+        String tipoPagamento = request.getParameter("tipoPagamento");
+
+        boolean isMeiaEntrada = request.getParameter("meiaEntrada") != null;
+        int parcelas = request.getParameter("parcelas") != null ? Integer.parseInt(request.getParameter("parcelas")) : 1;
 
         IngressoDAO ingressoDAO = new IngressoDAO();
+
+        ClienteModel cliente = ClienteModel.getBuilder()
+                .comId(idCliente)
+                .constroi();
+
+        SessaoModel sessao = SessaoModel.getBuilder()
+                .comId(idSessao)
+                .constroi();
+
+        PagamentoModel pagamento = switch (formaPagamento) {
+            case "Cartão" -> new Cartao();
+            case "Pix" -> new Pix();
+            default -> new Boleto();
+        };
+        pagamento = tipoPagamento.equals("Parcelado") ?
+                new PagamentoParcelado(pagamento, parcelas, valorPagamento) :
+                new PagamentoAVista(pagamento, valorPagamento, isMeiaEntrada);
+
+        IngressoModel ingresso = IngressoModel.getBuilder()
+                .comCliente(cliente)
+                .comSessao(sessao)
+                .comPagamento(pagamento)
+                .constroi();
+
         try {
-            ClienteModel cliente = ClienteModel.getBuilder()
-                    .comId(idCliente)
-                    .constroi();
-
-            SessaoModel sessao = SessaoModel.getBuilder()
-                    .comId(idSessao)
-                    .constroi();
-
-            PagamentoModel pagamento =  new PagamentoBuilder(switch (formaPagamento) {
-                case "Cartão" -> new Cartao();
-                case "Pix" -> new Pix();
-                default -> new Dinheiro();
-            })
-                    .comValor(valorPagamento)
-                    .constroi();
-
-            IngressoModel ingresso = IngressoModel.getBuilder()
-                    .comCliente(cliente)
-                    .comSessao(sessao)
-                    .comPagamento(pagamento)
-                    .constroi();
-
             ingressoDAO.cadastrar(ingresso);
         } catch (ClassNotFoundException | SQLException | NumberFormatException err) {
             String mensagem = err.toString();

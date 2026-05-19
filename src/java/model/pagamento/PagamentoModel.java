@@ -10,14 +10,9 @@ package model.pagamento;
  */
 public abstract class PagamentoModel implements IPagamento {
     protected int id;
-    protected double valor;
 
     public int getId() {
         return id;
-    }
-
-    public double getValor() {
-        return valor;
     }
 
     public abstract String getFormaPagamento();

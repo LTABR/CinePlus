@@ -45,7 +45,7 @@ body {
 .ingresso-form {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    align-items: baseline;
+    align-items: center;
     justify-items: center;
     margin-top: 40px;
     justify-content: center;
@@ -122,6 +122,16 @@ select.input-gold {
     font-weight: bold;
     outline: none;
     padding: 10px 20px;
+}
+
+.meiaEntrada {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.meiaEntrada input {
+    width: auto;
 }
 
 /* ESPAÇAMENTO */

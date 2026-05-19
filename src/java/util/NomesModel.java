@@ -5,6 +5,7 @@ public enum NomesModel {
     FILME("Filme", "Filmes"),
     INGRESSO("Ingresso", "Ingressos"),
     SALA("Sala", "Salas"),
+    PAGAMENTO("Pagamento", "Pagamentos"),
     SESSAO("Sessão", "Sessões", "Sessao");
 
     private final String singular;
