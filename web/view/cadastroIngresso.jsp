@@ -40,6 +40,7 @@
         <%
             for (NomesModel nomeModel : NomesModel.values()) {
                 if (nomeModel.getSingular().equals(ingressoEnum.getSingular())) continue;
+                if (nomeModel.getSingular().equals(pagamentoEnum.getSingular())) continue;
         %>
         <a href="controle?op=<%out.print(AcoesCommand.CONSULTAR_TODOS.getAcao());%>&model=<%out.print(nomeModel.getSingularSemAcento());%>"><%out.print(nomeModel.getPlural());%></a>
         <%}%>
