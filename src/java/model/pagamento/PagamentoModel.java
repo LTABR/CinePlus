@@ -8,7 +8,7 @@ package model.pagamento;
  *
  * @author lucas
  */
-public abstract class PagamentoModel implements IPagamento {
+public abstract class PagamentoModel {
     protected int id;
 
     public int getId() {

@@ -63,8 +63,7 @@ CREATE TABLE `sessoessala`
 
 
 
-DELIMITER
-//
+DELIMITER //
 CREATE TRIGGER `tg_deletar_sessoes_expiradas`
     BEFORE INSERT
     ON `ingresso`
@@ -73,7 +72,8 @@ BEGIN
     DELETE s FROM `sessao` s
     INNER JOIN `filme` f ON s.idFilme = f.idFilme
     WHERE DATE_ADD(s.datahora, INTERVAL f.duracao MINUTE) < CURRENT_TIMESTAMP();
-END // DELIMITER;
+END
+//
 
 
 -- Movies
